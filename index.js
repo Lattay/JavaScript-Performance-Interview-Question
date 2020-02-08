@@ -6,17 +6,20 @@ const getLargestContiguousNodesObservableConcurrent = require('./getLargestConti
 const getLargestContiguousNodesObservableSequential = require('./getLargestContiguousNodesObservableSequential')
 const getLargestContiguousNodesObservableRandom = require('./getLargestContiguousNodesObservableRandom')
 const getLargestContiguousNodesRecursive = require('./getLargestContiguousNodesRecursive')
+const getLargestContiguousNodesLinear = require('./getLargestContiguousNodesLinear');
+
+const raw_nodes = generateNodes({numberOfColumns: 100, numberOfRows: 100});
 
 const nodes = (
-	addAdjacencies(
-		generateNodes({
-			numberOfColumns: 100,
-			numberOfRows: 100,
-		})
-	)
+	addAdjacencies(raw_nodes)
 )
 
 // console.log(nodes)
+
+console.time('Linear')
+const largestContiguousNodesLinear = getLargestContiguousNodesLinear(raw_nodes)
+console.timeEnd('Linear')
+console.log('size', 1 + largestContiguousNodesLinear.childrenCount)
 
 console.time('Recursive')
 const largestContiguousNodesRecursive = (
