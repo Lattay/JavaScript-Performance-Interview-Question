@@ -8,56 +8,61 @@ const getLargestContiguousNodesObservableRandom = require('./getLargestContiguou
 const getLargestContiguousNodesRecursive = require('./getLargestContiguousNodesRecursive')
 const getLargestContiguousNodesLinear = require('./getLargestContiguousNodesLinear');
 
-const raw_nodes = generateNodes({numberOfColumns: 100, numberOfRows: 100});
+function benchmark(w, h){
+    console.log('Grid of size', w, h)
+    const raw_nodes = generateNodes({numberOfColumns: w, numberOfRows: h})
 
-const nodes = (
-	addAdjacencies(raw_nodes)
-)
 
-// console.log(nodes)
 
-console.time('Linear')
-const largestContiguousNodesLinear = getLargestContiguousNodesLinear(raw_nodes)
-console.timeEnd('Linear')
-console.log('size', 1 + largestContiguousNodesLinear.childrenCount)
+    console.time('Linear')
+    const largestContiguousNodesLinear = getLargestContiguousNodesLinear(w, raw_nodes)
+    console.timeEnd('Linear')
+    console.log('size', 1 + largestContiguousNodesLinear.childrenCount)
 
-console.time('Recursive')
-const largestContiguousNodesRecursive = (
-	getLargestContiguousNodesRecursive(
-		nodes,
-	)
-)
-console.timeEnd('Recursive')
-console.log('length', largestContiguousNodesRecursive.length || 1)
+    console.time('addAdjacencies')
+    const nodes = addAdjacencies(raw_nodes)
+    console.timeEnd('addAdjacencies')
 
-console.time('Iterative')
-const largestContiguousNodesIterative = (
-	getLargestContiguousNodesIterativeRandom(
-		nodes,
-	)
-)
-console.timeEnd('Iterative')
-console.log('length', largestContiguousNodesIterative.length || 1)
+    console.time('Recursive')
+    const largestContiguousNodesRecursive = (
+        getLargestContiguousNodesRecursive(
+            nodes,
+        )
+    )
+    console.timeEnd('Recursive')
+    console.log('length', largestContiguousNodesRecursive.length || 1)
 
-console.time('Sequential Iterative')
-const largestContiguousNodesSequentialIterative = (
-	getLargestContiguousNodesIterativeSequential(
-		nodes,
-	)
-)
-console.timeEnd('Sequential Iterative')
-console.log('size', largestContiguousNodesSequentialIterative.size || 1)
+    console.time('Iterative')
+    const largestContiguousNodesIterative = (
+        getLargestContiguousNodesIterativeRandom(
+            nodes,
+        )
+    )
+    console.timeEnd('Iterative')
+    console.log('length', largestContiguousNodesIterative.length || 1)
 
-getLargestContiguousNodesObservableRandom(
-	nodes,
-)
-.subscribe(() => {
-	getLargestContiguousNodesObservableSequential(
-		nodes,
-	)
-	.subscribe(() => {
-		getLargestContiguousNodesObservableConcurrent(
-			nodes,
-		)
-	})
-})
+    console.time('Sequential Iterative')
+    const largestContiguousNodesSequentialIterative = (
+        getLargestContiguousNodesIterativeSequential(
+            nodes,
+        )
+    )
+    console.timeEnd('Sequential Iterative')
+    console.log('size', largestContiguousNodesSequentialIterative.size || 1)
+
+    getLargestContiguousNodesObservableRandom(
+        nodes,
+    )
+    .subscribe(() => {
+        getLargestContiguousNodesObservableSequential(
+            nodes,
+        )
+        .subscribe(() => {
+            getLargestContiguousNodesObservableConcurrent(
+                nodes,
+            )
+        })
+    })
+}
+
+benchmark(100, 100)

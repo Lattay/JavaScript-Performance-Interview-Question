@@ -1,20 +1,9 @@
 function prepareNodes(nodes){
-    let w = 0;
-
-    for(let node of nodes){
-        if(node.x > w)
-            w = node.x
-    }
-    w++;
-
     for(let node of nodes){
         node.color  = node.colorId;
         node.parent = node.id;
         node.childrenCount = 0;
-        node.x = node.id % w;
-        node.y = Math.floor(node.id / w);
     }
-    return w
 }
 
 function getNode(nodes, w, x, y){
@@ -38,12 +27,18 @@ function getRoot(nodes, node){
 }
 
 function addChild(parent, child){
+    if(parent.parent != parent.id){
+        // since I don't update parent patent's childrenCount
+        // (just to keep things simple)
+        // I should never add a child to a non root
+        console.err('parent is not a root !');
+    }
     child.parent = parent.id;
     parent.childrenCount += 1 + child.childrenCount;
 }
 
-function getLargestContiguousNodesLinear(nodes){
-    let w = prepareNodes(nodes);
+function getLargestContiguousNodesLinear(w, nodes){
+    prepareNodes(nodes);
     let maxChildren = -1;
     let biggerRoot = 0;
 
@@ -51,10 +46,10 @@ function getLargestContiguousNodesLinear(nodes){
         let rootc = getRoot(nodes, current);
 
         let x = current.x;
-        let y = current.y
+        let y = current.y;
 
         if(x > 1){
-            let other = getNode(nodes, w, x - 1, y)
+            let other = getNode(nodes, w, x - 1, y);
             if(other.color == current.color){
                 let rooto = getRoot(nodes, other);
                 if(rooto.id != rootc.id){
@@ -64,9 +59,7 @@ function getLargestContiguousNodesLinear(nodes){
         }
 
         if(y > 1){
-            let other = getNode(nodes, w, x, y - 1)
-            if(!other)
-                console.log(x + (y-1) * w)
+            let other = getNode(nodes, w, x, y - 1);
             if(other.color == current.color){
                 let rooto = getRoot(nodes, other);
                 if(rooto.id != rootc.id){
@@ -83,4 +76,4 @@ function getLargestContiguousNodesLinear(nodes){
     return nodes[biggerRoot];
 }
 
-module.exports = getLargestContiguousNodesLinear
+module.exports = getLargestContiguousNodesLinear;
