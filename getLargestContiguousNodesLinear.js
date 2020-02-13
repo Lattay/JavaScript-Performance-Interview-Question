@@ -28,13 +28,15 @@ function getRoot(nodes, node){
 
 function addChild(parent, child){
     if(parent.parent != parent.id){
-        // since I don't update parent patent's childrenCount
+        // since I don't update parent's ancestors' childrenCount
         // (just to keep things simple)
         // I should never add a child to a non root
         console.err('parent is not a root !');
     }
-    child.parent = parent.id;
-    parent.childrenCount += 1 + child.childrenCount;
+    if(parent.id != child.id){
+        child.parent = parent.id;
+        parent.childrenCount += 1 + child.childrenCount;
+    }
 }
 
 function getLargestContiguousNodesLinear(w, nodes){
@@ -43,28 +45,28 @@ function getLargestContiguousNodesLinear(w, nodes){
     let biggerRoot = 0;
 
     for(let current of nodes){
-        let rootc = getRoot(nodes, current);
-
         let x = current.x;
         let y = current.y;
 
-        if(x > 0){
+        let rootc = current
+
+        if(x >= 1){
+            // look left
             let other = getNode(nodes, w, x - 1, y);
-            if(other.color == current.color){
+            if(other.color == rootc.color){
                 let rooto = getRoot(nodes, other);
-                if(rooto.id != rootc.id){
-                    addChild(rootc, rooto);
-                }
+                addChild(rooto, rootc);
+                rootc = rooto
             }
         }
 
-        if(y > 0){
+        if(y >= 1){
+            // look up
             let other = getNode(nodes, w, x, y - 1);
-            if(other.color == current.color){
+            if(other.color == rootc.color){
                 let rooto = getRoot(nodes, other);
-                if(rooto.id != rootc.id){
-                    addChild(rootc, rooto);
-                }
+                addChild(rooto, rootc);
+                rootc = rooto
             }
         }
 
