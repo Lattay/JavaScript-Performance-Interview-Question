@@ -48,7 +48,7 @@ function getLargestContiguousNodesLinear(w, nodes){
         let x = current.x;
         let y = current.y;
 
-        if(x > 1){
+        if(x > 0){
             let other = getNode(nodes, w, x - 1, y);
             if(other.color == current.color){
                 let rooto = getRoot(nodes, other);
@@ -58,7 +58,7 @@ function getLargestContiguousNodesLinear(w, nodes){
             }
         }
 
-        if(y > 1){
+        if(y > 0){
             let other = getNode(nodes, w, x, y - 1);
             if(other.color == current.color){
                 let rooto = getRoot(nodes, other);
